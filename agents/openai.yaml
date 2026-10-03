@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scientific Literature Review Deck"
+  short_description: "Build evidence-traceable literature review decks"
+  default_prompt: "Use $scientific-literature-review-deck to review a folder of papers and produce an editable evidence-backed presentation."
