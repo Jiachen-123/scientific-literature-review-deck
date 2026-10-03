@@ -1,70 +1,70 @@
 # Scientific Literature Review Deck
 
-一个用于 **系统阅读科学论文 PDF，并生成证据可追溯、图文并茂、可编辑文献调研 PPT** 的 Codex skill。
+A Codex skill for **systematically reviewing scientific PDFs and producing an evidence-traceable, illustrated, and editable literature-review presentation**.
 
-它不会把结果做成“一篇论文一页”的摘要集合，而是围绕核心科学问题组织证据，形成：
+Instead of creating a one-paper-per-slide summary collection, the skill organizes evidence around core scientific questions and builds a coherent narrative:
 
-> 研究背景 → 核心问题 → 关键证据 → 机制解释 → 共识与分歧 → 研究不足 → 后续启示
+> Background → Core questions → Key evidence → Mechanistic interpretation → Consensus and disagreement → Research gaps → Implications
 
-## 主要能力
+## Key capabilities
 
-- 递归扫描论文文件夹，统计 PDF、识别完全重复文件并记录读取异常。
-- 对重点论文联合阅读方法、结果、讨论、结论和图注，而非只依赖摘要。
-- 建立观点—证据台账，记录 DOI、实验条件、定量结果、局限及 PDF/印刷页码。
-- 从原文提取或高分辨率裁取关键图，并保存图号、分图、页码和适用限制。
-- 生成 16:9 可编辑 PPT、浏览版 PDF、证据表、逐篇笔记和原图索引。
-- 使用 PPT 原生形状绘制综合机制图，不用生成式图像重绘论文原图。
-- 渲染并逐页检查排版、图像清晰度、引用、单位和证据强度。
+- Recursively inventories a paper folder, counts PDFs, detects exact duplicates, and records reading failures.
+- Reads the methods, results, discussion, conclusions, and figure captions of priority papers instead of relying on abstracts alone.
+- Builds a claim–evidence ledger containing DOI information, experimental conditions, quantitative results, limitations, and PDF/printed page references.
+- Extracts or crops high-resolution source figures and records their figure number, panel, page, supported claim, and interpretation limits.
+- Produces an editable 16:9 PPTX, a PDF preview, an evidence table, per-paper notes, and a source-figure index.
+- Draws synthesis and mechanism diagrams with native PowerPoint shapes rather than using generated images to recreate published figures.
+- Renders and checks every slide for layout, figure legibility, citations, units, and evidence strength.
 
-## 安装
+## Installation
 
-将仓库克隆到 Codex skills 目录：
+Clone this repository into your Codex skills directory:
 
 ```bash
 git clone https://github.com/Jiachen-123/scientific-literature-review-deck.git ~/.codex/skills/scientific-literature-review-deck
 ```
 
-Windows PowerShell：
+Windows PowerShell:
 
 ```powershell
 git clone https://github.com/Jiachen-123/scientific-literature-review-deck.git "$env:USERPROFILE\.codex\skills\scientific-literature-review-deck"
 ```
 
-重新启动 Codex 或开启新对话，使 skill 被发现。
+Restart Codex or open a new conversation so the skill can be discovered.
 
-## 使用方式
+## Usage
 
-在 Codex 中直接调用：
+Invoke the skill directly in Codex:
 
 ```text
-使用 $scientific-literature-review-deck，对“/path/to/papers”中的文献开展系统调研。
-主题：绿泥石包膜对石英胶结和长石溶蚀的影响。
-重点关注：包膜完整性、形成时序、实验条件与储层质量之间的证据链。
-请将中文可编辑 PPT、PDF、证据表、原图索引和逐篇笔记保存到“/path/to/output”。
+Use $scientific-literature-review-deck to systematically review the papers in "/path/to/papers".
+Topic: Effects of chlorite coatings on quartz cementation and feldspar dissolution.
+Focus: Evidence linking coating integrity, formation timing, experimental conditions, and reservoir quality.
+Save the editable presentation, PDF, evidence table, source-figure index, and per-paper notes to "/path/to/output".
 ```
 
-至少应提供：
+At minimum, provide:
 
-- `input_dir`：论文 PDF 文件夹；
-- `output_dir`：独立输出文件夹。
+- `input_dir`: the folder containing the paper PDFs;
+- `output_dir`: a separate folder for final deliverables.
 
-建议同时提供 `topic` 和 `focus_questions`。若未提供主题或重点问题，skill 会基于文献提出暂定范围，并在不影响推进时继续执行。
+Providing `topic` and `focus_questions` is recommended. If they are omitted, the skill derives a provisional scope and core questions from the literature, states its assumptions, and continues when doing so does not materially change the assignment.
 
-可选参数示例：
+Optional parameters:
 
 ```yaml
 input_dir: /path/to/papers
 topic: review topic
 focus_questions: []
 output_dir: /path/to/output
-language: zh-CN
+language: en
 slide_target: 15-25
 evidence_format: xlsx
 figure_dpi: 300
 template: /path/to/template.pptx
 ```
 
-## 默认交付物
+## Default deliverables
 
 ```text
 output_dir/
@@ -77,19 +77,19 @@ output_dir/
     └── selected-figures...
 ```
 
-文件名可按用户要求调整。临时渲染、提取缓存和检查日志不应混入最终交付目录。
+File names may be changed to match the user's request. Temporary renders, extraction caches, and validation logs should remain outside the final delivery folder.
 
-## 依赖与配套能力
+## Requirements
 
-运行环境需要具备：
+The runtime should provide:
 
-- PDF 阅读、页面渲染与截图能力；
-- PowerPoint 创建、渲染和布局检查能力；
-- 生成 XLSX 时所需的电子表格能力；
-- Python 3；
-- Python 包 `pypdf` 和 `Pillow`（分别用于 PDF 清单/交付检查与联系表生成）。
+- PDF reading, page rendering, and screenshot capabilities;
+- PowerPoint authoring, rendering, and layout inspection capabilities;
+- spreadsheet support when XLSX output is requested;
+- Python 3;
+- the Python packages `pypdf` and `Pillow`, used for PDF inventory/delivery checks and contact-sheet generation.
 
-脚本示例：
+Example script calls:
 
 ```bash
 python scripts/inventory_pdfs.py INPUT_DIR --output WORK_DIR/inventory.json --summary WORK_DIR/inventory.md
@@ -97,20 +97,20 @@ python scripts/make_contact_sheet.py RENDERED_SLIDES --output-dir CONTACT_SHEETS
 python scripts/validate_outputs.py --pptx OUTPUT/review.pptx --pdf OUTPUT/review.pdf --evidence OUTPUT/evidence.xlsx --notes OUTPUT/per-paper-notes.md --figures OUTPUT/source-figures
 ```
 
-## 质量与证据边界
+## Evidence and quality boundaries
 
-- 每个关键结论都应关联来源文献及页码，并区分 PDF 页码与文章印刷页码。
-- 明确区分直接观察、作者解释和跨文献综合推断。
-- 定量结果必须保留单位、条件和比较基准；相关性不得直接表述为因果性。
-- 无法读取、缺页、加密或扫描质量差的文件会单独记录，不补写缺失内容。
-- 原文图不拉伸、不篡改数据；圈选、箭头和中文解释使用 PPT 可编辑叠加对象。
-- 自动检查脚本只能验证交付包的基本结构，不能替代逐页视觉检查和科学判断。
+- Every major claim should cite its source paper and page location, distinguishing PDF page numbers from printed article pages.
+- Direct observations, author interpretations, and cross-paper synthesis or inference must be labeled separately.
+- Quantitative results must retain their units, conditions, and comparison baseline; correlation must not be presented as causation.
+- Unreadable, incomplete, encrypted, or poor-quality scanned files are recorded separately. Missing content is never invented.
+- Published figures must not be stretched or scientifically altered. Highlights, arrows, and translated explanations should remain editable PowerPoint overlays.
+- Automated validators check basic package structure only; they do not replace slide-by-slide visual inspection or scientific judgment.
 
-## 隐私说明
+## Privacy
 
-本仓库只包含可复用的工作流程、通用脚本和格式规范，不包含论文 PDF、原始数据、提取图片、PPT 成果、分析报告、聊天记录、账号信息或密钥。实际数据路径和项目参数均由用户在运行时提供。
+This repository contains only a reusable workflow, generic scripts, and format specifications. It does not contain paper PDFs, source data, extracted figures, generated presentations, analysis results, chat records, account information, or credentials. All data paths and project parameters are supplied by the user at runtime.
 
-## 仓库结构
+## Repository structure
 
 ```text
 scientific-literature-review-deck/
@@ -126,4 +126,4 @@ scientific-literature-review-deck/
     └── validate_outputs.py
 ```
 
-详细执行规则见 [`SKILL.md`](SKILL.md)。
+See [`SKILL.md`](SKILL.md) for the complete workflow and operating rules.
